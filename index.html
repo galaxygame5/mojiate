@@ -105,11 +105,11 @@
         <div id="viewLobby" class="space-y-6">
             <div class="text-center space-y-3 my-2">
                 <div class="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-bold border border-amber-500/20 mb-1">
-                    高田村でおなじみ！50音ランダム名付けゲーム
+                    高田村スタイル！50音ランダム名付けゲーム
                 </div>
                 <h2 class="text-3xl md:text-4xl font-black text-white">一番それっぽい名前を作れ！</h2>
                 <p class="text-slate-400 text-sm md:text-base max-w-lg mx-auto">
-                    毎ターンランダムで配られる文字をマスに配置。パスや濁点・小文字化の特殊権限を駆使して最高にセンスのある名前を成立させよう！
+                    毎ターン配られる文字を自由に配置。パスや濁点・小文字化を駆使して最高の名前を完成させよう！
                 </p>
             </div>
 
@@ -185,10 +185,13 @@
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-2">文字数モード</label>
+                            <label class="block text-xs font-bold text-slate-400 mb-2">文字数設定 (5〜9文字)</label>
                             <select id="settingCharLength" onchange="updateSettings()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold text-sm focus:outline-none focus:border-amber-500">
-                                <option value="7">7文字（通常人名：苗字4・名前3）</option>
-                                <option value="5">5文字（VTuber・ニックネーム）</option>
+                                <option value="5">5文字</option>
+                                <option value="6">6文字</option>
+                                <option value="7" selected>7文字（標準）</option>
+                                <option value="8">8文字</option>
+                                <option value="9">9文字</option>
                             </select>
                         </div>
                         <div>
@@ -305,32 +308,51 @@
             </div>
         </div>
 
-        <!-- VIEW 4: RESULT & VOTING PHASE -->
-        <div id="viewGameOver" class="hidden glass-panel rounded-2xl p-6 md:p-8 shadow-2xl text-center space-y-6">
-            <div class="py-2 space-y-2">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center text-4xl mx-auto shadow-lg shadow-amber-500/30">
-                    🏆
+        <!-- VIEW 4: VOTING PHASE -->
+        <div id="viewVoting" class="hidden glass-panel rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center text-3xl mx-auto shadow-lg shadow-amber-500/30">
+                    🗳️
                 </div>
-                <h2 class="text-3xl md:text-4xl font-black text-white">全員の名前が完成！</h2>
-                <p class="text-sm text-slate-400">投票で一番「それっぽい名前」を決めよう！</p>
+                <h2 class="text-3xl font-black text-white">投票フェーズ</h2>
+                <p class="text-sm text-slate-400">全員の名前が完成しました！他のプレイヤーが作った名前を確認して投票しよう！</p>
             </div>
 
             <!-- Completed Names List with Vote Buttons -->
             <div class="space-y-3 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 text-left">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">完成した名前一覧</h4>
-                <div id="finalNamesList" class="space-y-3">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">全員の作成名一覧</h4>
+                <div id="votingNamesList" class="space-y-3">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 5: RESULT / RANKING PHASE -->
+        <div id="viewGameOver" class="hidden glass-panel rounded-2xl p-6 md:p-8 shadow-2xl text-center space-y-6">
+            <div class="py-2 space-y-2">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center text-4xl mx-auto shadow-lg shadow-amber-500/30">
+                    👑
+                </div>
+                <h2 class="text-3xl md:text-4xl font-black text-amber-400">結果発表＆ランキング！</h2>
+                <p class="text-sm text-slate-400">最もセンスのある名前を作った勝者は誰だ！？</p>
+            </div>
+
+            <!-- Ranking List -->
+            <div class="space-y-3 bg-slate-900/80 p-5 rounded-2xl border border-slate-800 text-left">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">順位結果</h4>
+                <div id="rankingNamesList" class="space-y-3">
                     <!-- Dynamically populated -->
                 </div>
             </div>
 
-            <!-- Play Again Controls -->
+            <!-- Play Again Controls (Host returns everyone to Lobby) -->
             <div id="gameOverHostControls" class="hidden space-y-2 pt-2">
-                <button onclick="restartGame()" class="w-full bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-extrabold text-xl py-5 rounded-xl shadow-lg transition transform active:scale-95">
-                    次のゲームを始める 🔄
+                <button onclick="returnToLobby()" class="w-full bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-extrabold text-xl py-5 rounded-xl shadow-lg transition transform active:scale-95">
+                    ロビーに戻ってもう一度遊ぶ 🔄
                 </button>
             </div>
             <p id="gameOverClientMsg" class="hidden text-sm text-slate-400 animate-pulse">
-                ホストが次のゲームを準備中です...
+                ホストがロビーに戻るのを待っています...
             </p>
         </div>
 
@@ -355,9 +377,8 @@
 
     <!-- GAME ENGINE & PEERJS ONLINE SCRIPT -->
     <script>
-        const PREFIX = "takada-namemaking-v1-";
+        const PREFIX = "takada-namemaking-v2-";
 
-        // 50音定義（清音）
         const KANA_POOL = [
             'あ', 'い', 'う', 'え', 'お',
             'か', 'き', 'く', 'け', 'こ',
@@ -371,7 +392,6 @@
             'わ', 'ん'
         ];
 
-        // 濁点・半濁点変換マップ
         const DAKU_MAP = {
             'か':['が'], 'き':['ぎ'], 'く':['ぐ'], 'け':['げ'], 'こ':['ご'],
             'さ':['ざ'], 'し':['じ'], 'す':['ず'], 'せ':['ぜ'], 'そ':['ぞ'],
@@ -380,7 +400,6 @@
             'ウ':['ゔ']
         };
 
-        // 小文字変換マップ
         const SMALL_MAP = {
             'あ':'ぁ', 'い':'ぃ', 'う':'ぅ', 'え':'ぇ', 'お':'ぉ',
             'つ':'っ', 'や':'ゃ', 'ゆ':'ゅ', 'よ':'ょ', 'わ':'ゎ'
@@ -394,7 +413,7 @@
         let roomData = {
             status: 'LOBBY',
             settings: {
-                charLength: 7, // 7 or 5
+                charLength: 7, // 5〜9
                 theme: '通常の人名'
             },
             turnOrder: [],
@@ -469,7 +488,7 @@
         }
 
         function showView(viewId) {
-            ['viewLobby', 'viewRoomLobby', 'viewBattle', 'viewGameOver'].forEach(id => {
+            ['viewLobby', 'viewRoomLobby', 'viewBattle', 'viewVoting', 'viewGameOver'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(viewId).classList.remove('hidden');
@@ -627,6 +646,8 @@
                 processDaku(data.playerId, data.convertedChar);
             } else if (data.type === 'VOTE') {
                 processVote(data.voterId, data.targetId);
+            } else if (data.type === 'RETURN_TO_LOBBY') {
+                resetGameToLobby();
             }
         }
 
@@ -660,7 +681,6 @@
 
             roomData.status = 'BATTLE';
             roomData.remainingKanaPool = [...KANA_POOL];
-            // 山札シャッフル
             for (let i = roomData.remainingKanaPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [roomData.remainingKanaPool[i], roomData.remainingKanaPool[j]] = [roomData.remainingKanaPool[j], roomData.remainingKanaPool[i]];
@@ -679,7 +699,6 @@
             roomData.votes = {};
             roomData.logs = [];
 
-            // 最初の1文字を配る
             drawNextLetter();
             addLog(`対戦スタート！ テーマ:【${roomData.settings.theme}】 (${len}文字)`);
             broadcastState();
@@ -742,15 +761,13 @@
         }
 
         function checkTurnEndAndAdvance() {
-            // 全員の全マスが埋まったか確認
             const allFinished = Object.values(roomData.players).every(p => p.slots.every(s => s !== ''));
 
             if (allFinished) {
-                roomData.status = 'GAMEOVER';
-                addLog(`🎉 全員の名前が完成しました！投票タイム！`);
+                roomData.status = 'VOTING';
+                addLog(`🎉 全員の名前が完成しました！投票フェーズ開始！`);
                 playSound('fanfare');
             } else {
-                // 次のターンへ（まだマスが残っているプレイヤーに順番を渡す）
                 let nextIdx = (roomData.currentTurnIndex + 1) % roomData.turnOrder.length;
                 while (roomData.players[roomData.turnOrder[nextIdx]].slots.every(s => s !== '')) {
                     nextIdx = (nextIdx + 1) % roomData.turnOrder.length;
@@ -772,6 +789,29 @@
             }
 
             addLog(`🗳️ 投票が1票投じられました`);
+
+            // 全員が投票完了したかチェック -> 完了したら結果発表(GAMEOVER)へ
+            const allVoted = Object.values(roomData.players).every(p => p.hasVoted);
+            if (allVoted) {
+                roomData.status = 'GAMEOVER';
+                addLog(`🏆 投票が締め切られました！結果発表！`);
+            }
+
+            broadcastState();
+        }
+
+        function resetGameToLobby() {
+            if (!isHost) return;
+            roomData.status = 'LOBBY';
+            roomData.logs = [];
+            roomData.votes = {};
+            Object.values(roomData.players).forEach(p => {
+                p.slots = Array(parseInt(roomData.settings.charLength)).fill('');
+                p.usedDiscard = false;
+                p.usedSmall = false;
+                p.usedDaku = false;
+                p.hasVoted = false;
+            });
             broadcastState();
         }
 
@@ -797,7 +837,7 @@
                     selTheme.disabled = false;
                 } else {
                     startBtn.classList.add('hidden');
-                    waitingMsg.classList.remove('hidden');
+                    waitingMsg.classList.add('hidden');
                     selLen.disabled = true;
                     selTheme.disabled = true;
                 }
@@ -846,7 +886,6 @@
 
                     const p = roomData.players[myId];
                     
-                    // 特殊アクションボタンの状態更新
                     const btnDiscard = document.getElementById('btnDiscard');
                     btnDiscard.disabled = p.usedDiscard;
                     btnDiscard.className = p.usedDiscard ? "bg-slate-900 text-slate-600 border border-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs sm:text-sm cursor-not-allowed flex flex-col items-center gap-1 opacity-50" : "bg-slate-800 hover:bg-slate-700 text-rose-400 border border-rose-500/30 font-bold py-2.5 px-3 rounded-xl text-xs sm:text-sm transition flex flex-col items-center gap-1 cursor-pointer";
@@ -869,28 +908,18 @@
                 renderActionLogs();
                 renderBattlePlayers(isMyTurn);
 
-            } else if (roomData.status === 'GAMEOVER') {
-                showView('viewGameOver');
+            } else if (roomData.status === 'VOTING') {
+                showView('viewVoting');
 
-                const namesList = document.getElementById('finalNamesList');
-                namesList.innerHTML = '';
-
+                const votingNamesList = document.getElementById('votingNamesList');
+                votingNamesList.innerHTML = '';
                 const myPlayer = roomData.players[myId];
 
                 Object.values(roomData.players).forEach(p => {
-                    const voteCount = (roomData.votes && roomData.votes[p.id]) || 0;
                     const div = document.createElement('div');
                     div.className = "flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-950 p-4 rounded-xl border border-slate-800 gap-3";
                     
-                    const charLen = parseInt(roomData.settings.charLength);
-                    let fullName = "";
-                    if (charLen === 7) {
-                        const surname = p.slots.slice(0, 4).join('');
-                        const givenName = p.slots.slice(4, 7).join('');
-                        fullName = `${surname} ${givenName}`;
-                    } else {
-                        fullName = p.slots.join('');
-                    }
+                    const fullName = p.slots.join('');
 
                     div.innerHTML = `
                         <div>
@@ -898,17 +927,52 @@
                             <span class="font-mono font-black text-amber-300 tracking-wider text-2xl">${escapeHtml(fullName)}</span>
                         </div>
                         <div class="flex items-center gap-3 w-full sm:w-auto justify-between">
-                            <span class="text-sm font-bold bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-xl border border-amber-500/30">
-                                🗳️ ${voteCount} 票
-                            </span>
                             <button onclick="voteForPlayer('${p.id}')" ${myPlayer.hasVoted ? 'disabled' : ''} class="${
                                 myPlayer.hasVoted ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-white active:scale-95'
                             } text-xs font-bold px-4 py-2.5 rounded-xl transition">
-                                ${myPlayer.hasVoted ? '投票済み' : '投票する'}
+                                ${myPlayer.hasVoted ? '投票済み' : 'この名前に投票する'}
                             </button>
                         </div>
                     `;
-                    namesList.appendChild(div);
+                    votingNamesList.appendChild(div);
+                });
+
+            } else if (roomData.status === 'GAMEOVER') {
+                showView('viewGameOver');
+
+                const rankingNamesList = document.getElementById('rankingNamesList');
+                rankingNamesList.innerHTML = '';
+
+                // 得票数順にソート
+                const sortedPlayers = [...Object.values(roomData.players)].sort((a, b) => {
+                    const votesA = (roomData.votes && roomData.votes[a.id]) || 0;
+                    const votesB = (roomData.votes && roomData.votes[b.id]) || 0;
+                    return votesB - votesA;
+                });
+
+                sortedPlayers.forEach((p, index) => {
+                    const voteCount = (roomData.votes && roomData.votes[p.id]) || 0;
+                    const div = document.createElement('div');
+                    div.className = `flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-xl border gap-3 ${
+                        index === 0 ? 'bg-amber-500/10 border-amber-500/50 shadow-lg' : 'bg-slate-950 border-slate-800'
+                    }`;
+                    
+                    const fullName = p.slots.join('');
+                    const rankBadge = index === 0 ? '🥇 1位' : index === 1 ? '🥈 2位' : index === 2 ? '🥉 3位' : `${index + 1}位`;
+
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="text-lg font-black text-amber-400 w-12">${rankBadge}</span>
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold block">${escapeHtml(p.name)}</span>
+                                <span class="font-mono font-black text-white tracking-wider text-2xl">${escapeHtml(fullName)}</span>
+                            </div>
+                        </div>
+                        <div class="text-sm font-bold bg-amber-500/20 text-amber-300 px-4 py-2 rounded-xl border border-amber-500/30">
+                            🗳️ ${voteCount} 票
+                        </div>
+                    `;
+                    rankingNamesList.appendChild(div);
                 });
 
                 const hostCtrl = document.getElementById('gameOverHostControls');
@@ -919,6 +983,7 @@
                     clientMsg.classList.add('hidden');
                 } else {
                     hostCtrl.classList.add('hidden');
+                    clientMsg.classList.add('animate-pulse');
                     clientMsg.classList.remove('hidden');
                 }
             }
@@ -964,15 +1029,12 @@
                     const char = p.slots[i] || '';
                     const isClickable = isMe && isMyTurn && char === '';
 
-                    // 7文字モードの場合、苗字と名前の間（4マス目の後）に余白を追加
-                    const marginClass = (charLen === 7 && i === 3) ? 'mr-3 sm:mr-5' : '';
-
                     if (char) {
-                        slotsHtml += `<div class="slot-box w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-amber-500/20 border-2 border-amber-400/80 text-amber-200 font-black flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 shadow-md ${marginClass}">${char}</div>`;
+                        slotsHtml += `<div class="slot-box w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-amber-500/20 border-2 border-amber-400/80 text-amber-200 font-black flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 shadow-md">${char}</div>`;
                     } else if (isClickable) {
-                        slotsHtml += `<button onclick="placeMyLetter(${i})" class="slot-box w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-slate-900 border-2 border-dashed border-amber-500/60 hover:bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-sm flex-shrink-0 cursor-pointer animate-pulse ${marginClass}">ここに置く</button>`;
+                        slotsHtml += `<button onclick="placeMyLetter(${i})" class="slot-box w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-slate-900 border-2 border-dashed border-amber-500/60 hover:bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs flex-shrink-0 cursor-pointer animate-pulse">ここに置く</button>`;
                     } else {
-                        slotsHtml += `<div class="slot-box disabled w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-700 font-bold flex items-center justify-center text-sm flex-shrink-0 ${marginClass}">-</div>`;
+                        slotsHtml += `<div class="slot-box disabled w-10 h-12 sm:w-12 sm:h-14 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-700 font-bold flex items-center justify-center text-sm flex-shrink-0">-</div>`;
                     }
                 }
 
@@ -1043,7 +1105,6 @@
             if (targets.length === 1) {
                 sendDaku(targets[0]);
             } else {
-                // 濁点・半濁点の選択モーダル
                 document.getElementById('dakuSourceChar').innerText = roomData.currentLetter;
                 const optionsDiv = document.getElementById('dakuOptions');
                 optionsDiv.innerHTML = '';
@@ -1082,9 +1143,10 @@
             }
         }
 
-        function restartGame() {
+        function returnToLobby() {
             if (!isHost) return;
-            startGame();
+            playSound('tap');
+            resetGameToLobby();
         }
 
         window.toggleSound = () => {
